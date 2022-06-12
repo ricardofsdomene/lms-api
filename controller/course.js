@@ -20,25 +20,26 @@ export const create = async (req, res) => {
       slug: slugify(req.body.name.toLowerCase()),
     });
 
-    if (alreadyExists)
+    if (alreadyExists) {
       res.json({
         success: false,
         message: "Infelizmente já existe um curso com esse nome",
       });
+    } else {
+      const course = new Course({
+        slug: slugify(req.body.name),
+        instructor: req.userId,
+        ...req.body,
+      });
 
-    const course = new Course({
-      slug: slugify(req.body.name),
-      instructor: req.userId,
-      ...req.body,
-    });
+      await course.save();
 
-    await course.save();
-
-    res.status(201).json({
-      success: true,
-      message: "Curso criado com sucesso!",
-      data: course,
-    });
+      res.status(201).json({
+        success: true,
+        message: "Curso criado com sucesso!",
+        data: course,
+      });
+    }
   } catch (e) {
     return res.status(500).json({ status: "Erro!", error: e });
   }
@@ -46,8 +47,17 @@ export const create = async (req, res) => {
 
 export const get = async (req, res) => {
   try {
-    const courses = await Course.find();
-    res.json(courses);
+    const slug = req.params.slug;
+    const course = await Course.findOne({ slug });
+
+    if (!course) {
+      return res.json({
+        error: true,
+        message: "Curso não encontrado.",
+      });
+    }
+
+    res.json(course);
   } catch (e) {
     return res.status(500).json({ stauts: "Erro!", erorr: e });
   }

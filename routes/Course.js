@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import {
+  get,
   create,
   getCourseById,
   getCoursesByInstructorId,
@@ -11,6 +12,7 @@ import {
 } from "../controller/course";
 
 router.post("/create", create);
+router.get("/:slug", get);
 
 router.post("/upload-image", uploadImage);
 router.post("/delete-image", deleteImage);

@@ -36,7 +36,7 @@ app.use("/images", express.static(path.join(__dirname, "assets")));
 
 app.use(`/auth`, authRoutes);
 app.use(`/user`, userRoutes);
-app.use(`/course`, checkAuthMiddleware, courseRoutes);
+app.use(`/course`, checkAuthMiddleware, isInstructor, courseRoutes);
 
 // app.delete("/delete", async (req, res) => {
 //   try {
