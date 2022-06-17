@@ -1,18 +1,25 @@
 import express from "express";
 const router = express.Router();
 
+import { nanoid } from "nanoid";
+
 import {
   get,
   create,
+  update,
   getCourseById,
   getCoursesByInstructorId,
   deleteCourse,
   uploadImage,
   deleteImage,
+  addLesson,
 } from "../controller/course";
 
 router.post("/create", create);
+router.put("/:slug", update);
 router.get("/:slug", get);
+
+router.post("/lesson/:slug/:instructorId", addLesson);
 
 router.post("/upload-image", uploadImage);
 router.post("/delete-image", deleteImage);

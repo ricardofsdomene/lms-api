@@ -1,133 +1,3 @@
-// const mongoose = require("mongoose");
-// const mongoosePaginate = require("mongoose-paginate-v2");
-
-// const courseSchema = new mongoose.Schema(
-//   {
-//     slug: {
-//       type: String,
-//       lowercase: true,
-//     },
-//     url: {
-//       public: String,
-//     },
-//     creator: {
-//       _id: mongoose.Types.ObjectId,
-//     },
-//     thumbnail: {
-//       image: String,
-//       video: String,
-//     },
-//     freePreview: {
-//       type: Boolean,
-//       default: true,
-//     },
-//     name: {
-//       minlength: 3,
-//       maxlength: 160,
-//       type: String,
-//       required: true,
-//     },
-//     description: {
-//       type: String,
-//     },
-//     categoria: {
-//       type: String,
-//     },
-//     keywords: {
-//       type: [String],
-//     },
-//     models: {
-//       type: [
-//         {
-//           type: {
-//             type: String,
-//             enum: ["Gratuito", "Pago"],
-//           },
-//           value: {
-//             type: Number,
-//             default: 0,
-//           },
-//           metodo: {
-//             type: String,
-//             enum: ["Daily", "Weekly", "Monthly", "Yearly", "Permanent"],
-//           },
-//         },
-//       ],
-//     },
-//     topics: {
-//       type: [String],
-//     },
-//     content: {
-//       metadata: {
-//         type: [Object],
-//       },
-//       modules: [Object],
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   }
-// );
-
-// const lessonSchema = new mongoose.Schema(
-//   {
-//     slug: {
-//       type: String,
-//       lowercase: true,
-//     },
-//     videoLink: {
-//       public: String,
-//     },
-//     freePreview: {
-//       type: Boolean,
-//       default: true,
-//     },
-//     name: {
-//       type: String,
-//     },
-//     description: {
-//       type: String,
-//     },
-//     keywords: {
-//       type: [String],
-//     },
-//     models: {
-//       type: [
-//         {
-//           type: {
-//             type: String,
-//             enum: ["Gratuito", "Pago"],
-//           },
-//           value: {
-//             type: Number,
-//             default: 0,
-//           },
-//           metodo: {
-//             type: String,
-//             enum: ["Daily", "Weekly", "Monthly", "Yearly", "Permanent"],
-//           },
-//         },
-//       ],
-//     },
-//     topics: {
-//       type: [String],
-//     },
-//     content: {
-//       metadata: {
-//         type: [Object],
-//       },
-//       modules: [Object],
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   }
-// );
-
-// courseSchema.plugin(mongoosePaginate);
-
-// module.exports = mongoose.model("Course", courseSchema);
-
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
@@ -150,7 +20,7 @@ const lessonSchema = new mongoose.Schema(
       type: {},
       minlength: 200,
     },
-    video_link: {},
+    video: {},
     free_preview: {
       type: Boolean,
       default: false,
@@ -169,6 +39,7 @@ const courseSchema = new mongoose.Schema(
       minlength: 6,
       maxlength: 120,
       required: true,
+      unique: true,
     },
     description: {
       type: String,
@@ -180,6 +51,7 @@ const courseSchema = new mongoose.Schema(
     slug: {
       type: String,
       lowercase: true,
+      unique: true,
     },
     content: {
       type: {},

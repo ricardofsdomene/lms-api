@@ -77,44 +77,48 @@ export const getCoursesByInstructorId = async (req, res) => {
   try {
     const userId = req.userId;
     const courses = await Course.find({ instructor: userId });
-    console.log(courses);
     res.json(courses);
   } catch (error) {
     return res.status(500).json({ stauts: "Erro!", erorr: e });
   }
 };
 
-export const update = async (request, response) => {
+export const update = async (req, res) => {
   try {
-    // endpoint/key/value/_id
+    const { slug } = req.params;
 
-    const key = request.body.key;
-    const value = request.body.value;
-    const id = request.params._id;
+    const course = await Course.findOne({ slug }).exec();
 
-    const update = { [key]: value, updatedAt: Date.now() };
+    if (req.userId != course.instructor) {
+      return res.status(400).send("Unauthorized");
+    }
 
-    await Course.findByIdAndUpdate(
-      id,
-      update,
-      { useFindAndModify: true, new: true },
-      function (err, docs) {
-        if (err) {
-          return response.json({ error: true, message: "falhou no mongoose" });
-        } else {
-          return response.json({
-            Message: "Curso atualizado com sucesso",
-            user: docs,
-          });
-        }
-      }
-    )
-      .clone()
-      .catch((error) => {
-        return response.json({ error: true, message: "falhou no mongoose" });
+    let name = req.body.name;
+
+    console.log(req.body);
+
+    if (course) {
+      const alreadyExists = await Course.findOne({
+        slug: slugify(req.body.name.toLowerCase()),
       });
+
+      if (alreadyExists) {
+        return res.json({
+          success: false,
+          message: "Infelizmente já existe um curso com esse nome",
+        });
+      } else {
+        const updated = await Course.findOneAndUpdate({ slug }, req.body, {
+          new: true,
+        }).exec();
+
+        return res.json(updated);
+      }
+    } else {
+      res.json({ message: "Curso não encontrado" });
+    }
   } catch (e) {
-    console.error(e);
+    res.status(500).json({ status: "Erro!", error: e });
   }
 };
 
@@ -251,5 +255,33 @@ export const deleteImage = async (req, res) => {
     });
   } catch (e) {
     res.status(500).json({ status: "Erro!", error: e });
+  }
+};
+
+export const addLesson = async (req, res) => {
+  try {
+    const { slug, instructorId } = req.params;
+    const { title, content, video } = req.body;
+
+    console.log("params", slug, instructorId);
+    console.log("body", title, content, video);
+
+    if (req.userId != instructorId) {
+      return res.status(500).send("Unauthorized");
+    }
+
+    const updated = await Course.findOneAndUpdate(
+      { slug },
+      {
+        $push: { lessons: { title, content, video, slug: slugify(title) } },
+      },
+      { new: true }
+    )
+      .populate("instructor", "_id name")
+      .exec();
+
+    res.json(updated);
+  } catch (e) {
+    res.status(50).json({ status: "Erro!", error: e });
   }
 };
